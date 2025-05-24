@@ -23,12 +23,22 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) Api con crud de productos usando postgreSQL
 
 ## Project setup
 
 ```bash
 $ npm install
+```
+
+### Crear Archivo .env en la raiz del proyecto
+```bash
+PORT=3000
+DB_HOST=localhost
+DB_USERNAME=
+DB_PASSWORD=
+DB_PORT=5432
+DB_DATABASE=
 ```
 
 ## Compile and run the project
@@ -49,12 +59,6 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
 ## License
