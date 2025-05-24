@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Param,
   Post,
   Put,
@@ -13,9 +14,12 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdateProductDto } from './dto/product.update.dts';
 import { ProductResponseDto } from './dto/product.response.dto';
 import { CreateProductDto } from './dto/product.create.dto';
+import { ProductService } from './product.service';
 
 @Controller('product')
 export class ProductController {
+  constructor(private readonly productService: ProductService) {}
+  // product POST endpoint
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear un nuevo producto' })
@@ -28,10 +32,12 @@ export class ProductController {
     type: CreateProductDto,
     description: 'Datos del producto a crear',
   })
-  create(@Body() product: CreateProductDto): Promise<ProductResponseDto> {
-    return Promise.resolve(new ProductResponseDto());
+  async create(@Body() product: CreateProductDto): Promise<ProductResponseDto> {
+    const createdProduct = await this.productService.create(product);
+    return createdProduct;
   }
 
+  // product GET endpoint
   @Get()
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({
@@ -39,10 +45,11 @@ export class ProductController {
     description: 'Lista de todos los productos.',
     type: [ProductResponseDto],
   })
-  findAll() {
-    return [];
+  async findAll() {
+    return await this.productService.findAll();
   }
 
+  // product/:id GET endpoint
   @Get(':id')
   @ApiOperation({ summary: 'Buscar un producto por ID' })
   @ApiResponse({
@@ -54,10 +61,11 @@ export class ProductController {
     status: HttpStatus.NOT_FOUND,
     description: 'Producto no encontrado.',
   })
-  findOne(@Param('id') id: string) {
-    return id;
+  async findOne(@Param('id') id: string) {
+    return await this.productService.findOne(+id);
   }
 
+  // product/:id PUT endpoint
   @Put(':id')
   @ApiOperation({ summary: 'Buscar y actualizar un producto por ID' })
   @ApiResponse({
@@ -81,13 +89,20 @@ export class ProductController {
     type: UpdateProductDto,
     description: 'Campos del producto a actualizar',
   })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<ProductResponseDto> {
-    return Promise.resolve(new ProductResponseDto());
+    try {
+      const product = await this.productService.update(+id, updateProductDto);
+      return product;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error al actualizar el producto');
+    }
   }
 
+  // product/:id DELETE endpoint
   @Delete(':id')
   @ApiOperation({ summary: 'Buscar y eliminar un producto por ID' })
   @ApiParam({
@@ -103,7 +118,15 @@ export class ProductController {
     status: HttpStatus.NOT_FOUND,
     description: 'Producto no encontrado.',
   })
-  delete(@Param('id') id: string) {
-    return 'delete product with id: ' + id;
+  async delete(@Param('id') id: string) {
+    try {
+      await this.productService.remove(+id);
+      return {
+        message: 'Producto eliminado correctamente',
+      };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error al eliminar el producto');
+    }
   }
 }
