@@ -5,13 +5,12 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  InternalServerErrorException,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { UpdateProductDto } from './dto/product.update.dts';
+import { UpdateProductDto } from './dto/product.update.dto';
 import { ProductResponseDto } from './dto/product.response.dto';
 import { CreateProductDto } from './dto/product.create.dto';
 import { ProductService } from './product.service';
@@ -93,17 +92,13 @@ export class ProductController {
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<ProductResponseDto> {
-    try {
-      const product = await this.productService.update(+id, updateProductDto);
-      return product;
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException('Error al actualizar el producto');
-    }
+    const product = await this.productService.update(+id, updateProductDto);
+    return product;
   }
 
   // product/:id DELETE endpoint
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Buscar y eliminar un producto por ID' })
   @ApiParam({
     name: 'id',
@@ -119,14 +114,6 @@ export class ProductController {
     description: 'Producto no encontrado.',
   })
   async delete(@Param('id') id: string) {
-    try {
-      await this.productService.remove(+id);
-      return {
-        message: 'Producto eliminado correctamente',
-      };
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException('Error al eliminar el producto');
-    }
+    return await this.productService.remove(+id);
   }
 }
