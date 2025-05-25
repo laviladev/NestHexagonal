@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envValidation } from './config/envValidation';
-import { ProductModule } from './product/product.module';
+import { ProductModule } from './infrastructure/adapters/input/rest/product/product.module';
 
 @Module({
   imports: [

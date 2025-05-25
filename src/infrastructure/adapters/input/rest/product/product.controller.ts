@@ -1,23 +1,16 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdateProductDto } from './dto/product.update.dto';
 import { ProductResponseDto } from './dto/product.response.dto';
 import { CreateProductDto } from './dto/product.create.dto';
-import { ProductService } from './product.service';
+import { IProductService, PRODUCT_SERVICE_PORT } from '../../../../../domain/ports/input/product.service.port';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    @Inject(PRODUCT_SERVICE_PORT)
+    private readonly productService: IProductService,
+  ) {}
   // product POST endpoint
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -88,10 +81,7 @@ export class ProductController {
     type: UpdateProductDto,
     description: 'Campos del producto a actualizar',
   })
-  async update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-  ): Promise<ProductResponseDto> {
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<ProductResponseDto> {
     const product = await this.productService.update(+id, updateProductDto);
     return product;
   }
