@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envValidation } from './config/envValidation';
 import { ProductModule } from './infrastructure/adapters/input/rest/product/product.module';
+import { TransactionRestModule } from './infrastructure/adapters/input/rest/transaction/transaction.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProductModule } from './infrastructure/adapters/input/rest/product/prod
       inject: [ConfigService],
     }),
     ProductModule,
+    TransactionRestModule,
   ],
 })
 export class AppModule {}

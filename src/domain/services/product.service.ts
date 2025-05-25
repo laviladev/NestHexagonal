@@ -3,12 +3,12 @@ import { Product } from '../models/product.entity';
 import { CreateProductDto } from '../../infrastructure/adapters/input/rest/product/dto/product.create.dto';
 import { UpdateProductDto } from '../../infrastructure/adapters/input/rest/product/dto/product.update.dto';
 import { IProductService } from '../ports/input/product.service.port';
-import { IRepository, REPOSITORY_PORT } from '../ports/output/index.repository.port';
+import { IProductRepository, PRODUCT_REPOSITORY_PORT } from '../ports/output/product.repository.port';
 
 @Injectable()
 export class ProductService implements IProductService {
   private readonly logger = new Logger(ProductService.name);
-  constructor(@Inject(REPOSITORY_PORT) private readonly repo: IRepository<Product, CreateProductDto>) {}
+  constructor(@Inject(PRODUCT_REPOSITORY_PORT) private readonly repo: IProductRepository) {}
 
   async create(dto: CreateProductDto): Promise<Product> {
     const exists = await this.repo.findOne({ where: { name: dto.name } });
