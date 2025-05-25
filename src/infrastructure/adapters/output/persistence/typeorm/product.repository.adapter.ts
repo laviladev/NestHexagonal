@@ -7,9 +7,7 @@ import { CreateProductDto } from '../../../input/rest/product/dto/product.create
 import { UpdateProductDto } from '../../../input/rest/product/dto/product.update.dto';
 
 @Injectable()
-export class TypeORMProductRepositoryAdapter
-  implements IRepository<Product, CreateProductDto>
-{
+export class TypeORMProductRepositoryAdapter implements IRepository<Product, CreateProductDto> {
   constructor(
     @InjectRepository(Product)
     private readonly productTypeOrmRepository: Repository<Product>, // Repositorio TypeORM real
