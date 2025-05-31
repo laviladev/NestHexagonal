@@ -25,11 +25,11 @@ export class TypeORMProductRepositoryAdapter implements IRepository<Product, Cre
   find(filter?: FindManyOptions<Product>): Promise<Product[]> {
     return this.productTypeOrmRepository.find(filter);
   }
-  findById(id: number): Promise<Product | null> {
+  findById(id: string): Promise<Product | null> {
     const element = this.productTypeOrmRepository.findOne({ where: { id } });
     return element;
   }
-  async update(id: number, entity: UpdateProductDto): Promise<Product | undefined> {
+  async update(id: string, entity: UpdateProductDto): Promise<Product | undefined> {
     // En este adaptador, primero debemos obtener la entidad, aplicar los cambios y luego guardar.
     // Esto es necesario porque el puerto solo recibe el DTO.
     const product = await this.productTypeOrmRepository.findOne({ where: { id } });
@@ -42,8 +42,8 @@ export class TypeORMProductRepositoryAdapter implements IRepository<Product, Cre
     Object.assign(product, entity);
     return this.productTypeOrmRepository.save(product);
   }
-  remove(entity: Product | number): Promise<void> {
-    if (typeof entity === 'number') {
+  remove(entity: Product | string): Promise<void> {
+    if (typeof entity === 'string') {
       void this.productTypeOrmRepository.delete(entity);
     }
     return this.remove(entity);

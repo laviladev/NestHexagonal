@@ -26,11 +26,11 @@ export class TypeORMTransactionRepositoryAdapter implements IRepository<Transact
     return this.transactionTypeOrmRepository.find(filter);
   }
 
-  async findById(id: number): Promise<Transaction | null> {
+  async findById(id: string): Promise<Transaction | null> {
     return this.transactionTypeOrmRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, entity: Transaction): Promise<Transaction | undefined> {
+  async update(id: string, entity: Transaction): Promise<Transaction | undefined> {
     const transaction = await this.transactionTypeOrmRepository.findOne({ where: { id } });
     if (!transaction) {
       return undefined;

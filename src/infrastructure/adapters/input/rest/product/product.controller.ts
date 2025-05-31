@@ -54,7 +54,7 @@ export class ProductController {
     description: 'Producto no encontrado.',
   })
   async findOne(@Param('id') id: string) {
-    return await this.productService.findOne(+id);
+    return await this.productService.findOne(id);
   }
 
   // product/:id PUT endpoint
@@ -82,7 +82,7 @@ export class ProductController {
     description: 'Campos del producto a actualizar',
   })
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<ProductResponseDto> {
-    const product = await this.productService.update(+id, updateProductDto);
+    const product = await this.productService.update(id, updateProductDto);
     return product;
   }
 
@@ -104,6 +104,6 @@ export class ProductController {
     description: 'Producto no encontrado.',
   })
   async delete(@Param('id') id: string) {
-    return await this.productService.remove(+id);
+    return await this.productService.remove(id);
   }
 }

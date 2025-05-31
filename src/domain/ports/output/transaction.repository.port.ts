@@ -5,7 +5,7 @@ export interface ITransactionRepository {
   save(product: Transaction | Partial<Transaction>): Promise<Transaction>;
   findOne(filter: Record<string, any>): Promise<Transaction | null>;
   find(): Promise<Transaction[]>;
-  findById(id: number): Promise<Transaction | null>;
+  findById(id: string): Promise<Transaction | null>;
   update(product: Transaction): Promise<Transaction>;
   remove(product: Transaction): Promise<void>;
 }

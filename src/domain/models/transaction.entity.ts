@@ -12,15 +12,20 @@ import { TransactionStatus } from '../../utils/enums';
 
 @Entity('transactions') // Nombre de la tabla
 export class Transaction {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Product, { nullable: false }) // Una transacción pertenece a un producto
-  @JoinColumn({ name: 'productId' }) // La FK en la tabla de transacciones será 'productId'
-  product: Product;
+  // --- RELACIÓN MUCHOS A UNO ---
+  // Muchas transacciones pueden pertenecer a un solo producto
+  // El primer argumento es la entidad del lado "uno" (Product)
+  // El segundo argumento es una función que retorna la propiedad en la entidad "uno"
+  // que hace referencia a esta entidad (el "transactions" en el Producto)
+  @ManyToOne(() => Product, (product) => product.transactions, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'productId' }) // La columna de clave foránea en la tabla 'transactions'
+  product: Product; // Propiedad para acceder al objeto Product relacionado
 
-  @Column({ type: 'int', nullable: false })
-  productId: number; // Columna para la FK
+  @Column({ type: 'uuid', nullable: false })
+  productId: string; // Columna para la FK
 
   @Column({ type: 'int', nullable: false })
   quantity: number; // Cantidad del producto comprado
@@ -51,8 +56,8 @@ export class Transaction {
   customerEmail: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  creation_date: Date; // Nombre actualizado
+  creationDate: Date; // Nombre actualizado
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  last_update: Date; // Nombre actualizado
+  lastUpdate: Date; // Nombre actualizado
 }

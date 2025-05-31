@@ -4,10 +4,9 @@ import { Transaction } from '../models/transaction.entity';
 import { CreateTransactionDto } from '../../infrastructure/adapters/input/rest/transaction/dto/create.transaction.dto';
 import { TransactionResponseDto } from '../../infrastructure/adapters/input/rest/transaction/dto/response.transaction.dto';
 import { ITransactionService } from '../ports/input/transaction.service.port';
-import { TransactionStatus } from '../../utils/enums';
+import { TransactionCurrency, TransactionStatus } from '../../utils/enums';
 import {
   IWompiPaymentGateway,
-  WOMPI_PAYMENT_GATEWAY_PORT,
   WompiTransactionRequest,
   WompiTransactionResponse,
 } from '../ports/output/payment.gateway.port';
@@ -29,7 +28,6 @@ export class TransactionService implements ITransactionService {
     // Inyectamos el ProductService del dominio para interactuar con productos
     @Inject(PRODUCT_SERVICE_PORT) // Este es el ProductService del dominio
     private readonly productDomainService: IProductService, // Asumimos que es IProductService
-    @Inject(WOMPI_PAYMENT_GATEWAY_PORT)
     private readonly wompiGateway: IWompiPaymentGateway,
   ) {}
 
@@ -63,7 +61,7 @@ export class TransactionService implements ITransactionService {
       status: TransactionStatus.PENDING,
       deliveryAddress: dto.deliveryAddress,
       customerName: dto.customerName,
-      customerEmail: dto.customerEmail,
+      customerEmail: dto.customer_email,
       wompiTransactionId: null, // Se llenará después del pago
       wompiPaymentMethodType: null, // Se llenará después del pago
       wompiPaymentStatusMessage: null, // Se llenará después del pago
@@ -75,12 +73,15 @@ export class TransactionService implements ITransactionService {
     let wompiResponse: WompiTransactionResponse;
     try {
       // 3. Llamar a Wompi API para completar el pago
-      const wompiRequest: WompiTransactionRequest = {
+      const wompiRequest: Partial<WompiTransactionRequest> = {
         amount_in_cents: totalAmountInCents,
-        currency: 'COP', // Moneda de Wompi (COP para pesos colombianos)
-        token: dto.wompiToken,
+        currency: TransactionCurrency.COP, // Moneda de Wompi (COP para pesos colombianos)
         reference: transaction.id.toString(), // Usar nuestra referencia de transacción interna
-        customer_email: dto.customerEmail,
+        customer_email: dto.customer_email,
+        payment_method_type: dto.payment_method.type, // Tipo de método de pago: CARD
+        payment_method: dto.payment_method,
+        accept_personal_auth: dto.accept_personal_auth,
+        acceptance_token: dto.acceptance_token,
       };
 
       this.logger.log(`[Domain] Llamando a Wompi para transacción ${transaction.id}...`);

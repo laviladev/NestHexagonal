@@ -3,10 +3,10 @@ import { TransactionStatus } from '../../../../../../utils/enums'; // Importa el
 
 export class TransactionResponseDto {
   @ApiProperty({ description: 'Internal transaction id', example: 1 })
-  id: number;
+  id: string;
 
   @ApiProperty({ description: 'Product id associated with the transaction', example: 1 })
-  productId: number;
+  productId: string;
 
   @ApiProperty({
     description: 'Current status of the transaction',

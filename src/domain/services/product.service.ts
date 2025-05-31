@@ -23,7 +23,7 @@ export class ProductService implements IProductService {
     return await this.repo.find();
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findOne(id: string): Promise<Product> {
     const product = await this.repo.findOne({ where: { id } });
     if (!product) {
       this.logger.warn('Product not found');
@@ -32,7 +32,7 @@ export class ProductService implements IProductService {
     return product;
   }
 
-  async update(id: number, updateProductDto: Partial<UpdateProductDto>): Promise<Product> {
+  async update(id: string, updateProductDto: Partial<UpdateProductDto>): Promise<Product> {
     const product = await this.repo.findById(id);
     if (!product) {
       this.logger.warn(`Producto con ID ${id} no encontrado para actualizar.`);
@@ -62,7 +62,7 @@ export class ProductService implements IProductService {
     }
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     const product = await this.findOne(id);
     await this.repo.remove(product);
     return {

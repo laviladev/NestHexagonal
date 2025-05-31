@@ -13,11 +13,13 @@ export class WompiPaymentGatewayAdapter implements IWompiPaymentGateway {
   private readonly httpClient: AxiosInstance;
   private readonly wompiApiBaseUrl: string;
   private readonly wompiPrivateKey: string;
+  private readonly wompiIntegrityKey: string;
   private readonly logger = new Logger(WompiPaymentGatewayAdapter.name);
 
   constructor(private readonly configService: ConfigService) {
     this.wompiApiBaseUrl = this.configService.get<string>('WOMPI_API_BASE_URL') as string;
-    this.wompiPrivateKey = this.configService.get<string>('WOMPI_PUBLIC_KEY') as string;
+    this.wompiPrivateKey = this.configService.get<string>('WOMPI_PRIVATE_KEY') as string;
+    this.wompiIntegrityKey = this.configService.get<string>('WOMPI_INTEGRITY_KEY') as string;
 
     this.httpClient = axios.create({
       baseURL: this.wompiApiBaseUrl,
@@ -28,10 +30,19 @@ export class WompiPaymentGatewayAdapter implements IWompiPaymentGateway {
     });
   }
 
-  async processPayment(paymentDetails: WompiTransactionRequest): Promise<WompiTransactionResponse> {
+  async processPayment(paymentDetails: Partial<WompiTransactionRequest>): Promise<WompiTransactionResponse> {
     this.logger.log(`[Adapter] Procesando pago con Wompi para referencia: ${paymentDetails.reference}`);
     try {
-      const response = await this.httpClient.post('/transactions', paymentDetails);
+      const calculateIntegrity = `${paymentDetails.reference}${paymentDetails.amount_in_cents}${paymentDetails.currency}${this.wompiIntegrityKey}`;
+      const encondedText = new TextEncoder().encode(calculateIntegrity);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', encondedText);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+      paymentDetails.signature = hashHex;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      const response = (await this.httpClient.post('/transactions', paymentDetails)) as {
+        data: WompiTransactionResponse;
+      };
       this.logger.log(`[Adapter] Respuesta exitosa de Wompi. Estado: ${response.data.data.status}`);
       return response.data;
     } catch (error) {

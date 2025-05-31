@@ -7,3 +7,13 @@ export enum TransactionStatus {
   ERROR = 'ERROR',
   // Otros estados de Wompi: PENDING, APPROVED, DECLINED, VOIDED, ERROR, AUTHORIZED, PENDING_VALIDATION
 }
+
+export enum TransactionCurrency {
+  COP = 'COP',
+}
+
+export enum PaymentMethodType {
+  CARD = 'CARD',
+  NEQUI = 'NEQUI',
+  PSE = 'PSE',
+}
