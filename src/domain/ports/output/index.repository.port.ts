@@ -6,8 +6,8 @@ export interface IRepository<T, CreateDto> {
   save(entity: CreateDto): Promise<T>;
   findOne(filter: FindOneOptions<T>): Promise<T | null>;
   find(filter?: FindManyOptions<T>): Promise<T[]>;
-  findById(id: number): Promise<T | null>;
-  update(id: number, entity: T): Promise<T | undefined>;
+  findById(id: string): Promise<T | null>;
+  update(id: string, entity: T): Promise<T | undefined>;
   remove(entity: T): Promise<void>;
 }
 // --- ¡NUEVA LÍNEA CLAVE PARA EL TOKEN DE INYECCIÓN! ---

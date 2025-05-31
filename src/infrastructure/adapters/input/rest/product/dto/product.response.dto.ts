@@ -4,7 +4,7 @@ import { Expose } from 'class-transformer';
 export class ProductResponseDto {
   @ApiProperty({ description: 'ID único del producto', example: 1 })
   @Expose()
-  id: number;
+  id: string;
 
   @ApiProperty({ description: 'Nombre del producto', example: 'Dark souls 4' })
   @Expose()
@@ -14,7 +14,7 @@ export class ProductResponseDto {
   @Expose()
   description: string;
 
-  @ApiProperty({ description: 'Precio unitario del producto', example: 120.50 })
+  @ApiProperty({ description: 'Precio unitario del producto', example: 120500 })
   @Expose()
   price: number;
 

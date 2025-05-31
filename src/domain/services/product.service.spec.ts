@@ -3,15 +3,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service'; // El SERVICIO DE DOMINIO
 import { Product } from '../models/product.entity'; // La entidad del dominio
-import { IRepository, REPOSITORY_PORT } from '../../domain/ports/output/index.repository.port'; // El puerto general y su token
+import { PRODUCT_REPOSITORY_PORT, IProductRepository } from '../ports/output/product.repository.port'; // Puerto de salida del repositorio
 import { PRODUCT_SERVICE_PORT } from '../ports/input/product.service.port'; // Puerto de entrada del servicio
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateProductDto } from '../../infrastructure/adapters/input/rest/product/dto/product.create.dto'; // DTOs con los nombres correctos
 import { UpdateProductDto } from '../../infrastructure/adapters/input/rest/product/dto/product.update.dto';
 
-// Definir un tipo para el mock de IRepository
+// Definir un tipo para el mock de IProductRepository
 // Asegúrate de que los genéricos coincidan con la inyección en ProductService
-type MockRepository = Record<keyof IRepository<Product, CreateProductDto>, jest.Mock>;
+type MockRepository = Record<keyof IProductRepository, jest.Mock>;
 
 // Función auxiliar para crear un mock del repositorio general
 const createMockRepository = (): MockRepository => ({
@@ -46,7 +46,7 @@ describe('ProductService (Domain Unit Tests)', () => {
           useClass: ProductService, // Clase del servicio de dominio
         },
         {
-          provide: REPOSITORY_PORT, // Token del puerto del repositorio general
+          provide: PRODUCT_REPOSITORY_PORT, // Token del puerto del repositorio general
           useValue: createMockRepository(), // Nuestro mock de la interfaz IRepository
         },
       ],
@@ -54,7 +54,7 @@ describe('ProductService (Domain Unit Tests)', () => {
 
     service = module.get<ProductService>(PRODUCT_SERVICE_PORT); // Obtenemos el servicio por su token
     // Obtenemos la instancia del mock del repositorio general para espiar sus llamadas
-    productRepository = module.get<MockRepository>(REPOSITORY_PORT);
+    productRepository = module.get<MockRepository>(PRODUCT_REPOSITORY_PORT);
   });
 
   afterEach(() => {

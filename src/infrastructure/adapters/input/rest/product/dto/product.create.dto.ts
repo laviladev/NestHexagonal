@@ -18,10 +18,10 @@ export class CreateProductDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ description: 'Precio unitario del producto', example: 120.5 })
+  @ApiProperty({ description: 'Precio unitario del producto', example: 120500 })
   @IsNumber({}, { message: 'El precio debe ser un número.' })
   @IsNotEmpty({ message: 'El precio no puede estar vacío.' })
-  @Min(0, { message: 'El precio no puede ser negativo.' })
+  @Min(2000, { message: 'El precio no puede ser menor a $2000 pesos colombianos.' })
   @Type(() => Number)
   price: number;
 

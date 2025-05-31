@@ -6,12 +6,12 @@ import { Type } from 'class-transformer';
 export class UpdateProductDto extends PartialType(CreateProductDto) {
   @ApiProperty({
     description: 'Nuevo precio unitario del producto',
-    example: 115.0,
+    example: 115000,
     required: false,
   })
   @IsOptional()
   @IsNumber({}, { message: 'El precio debe ser un número.' })
-  @Min(0, { message: 'El precio no puede ser negativo.' })
+  @Min(2000, { message: 'El precio no puede ser menor a $2000 pesos colombianos.' })
   @Type(() => Number)
   price?: number;
 

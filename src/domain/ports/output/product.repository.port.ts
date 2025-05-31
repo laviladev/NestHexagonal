@@ -5,7 +5,7 @@ export interface IProductRepository {
   save(product: CreateProductDto): Promise<Product>;
   findOne(filter: Record<string, any>): Promise<Product | null>;
   find(): Promise<Product[]>;
-  findById(id: number): Promise<Product | null>;
+  findById(id: string): Promise<Product | null>;
   update(product: Product): Promise<Product>;
   remove(product: Product): Promise<void>;
 }
